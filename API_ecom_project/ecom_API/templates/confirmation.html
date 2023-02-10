@@ -39,8 +39,9 @@
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<a class="navbar-brand logo_h" href="/"><img src="../static/img/logo.png" alt=""></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<button class="navbar-toggler" type="button" data-toggle="collapse"
+						data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -50,8 +51,8 @@
 							<li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
 							<li class="nav-item"><a class="nav-link" href="/category/">category</a></li>
 							<li class="nav-item submenu dropdown">
-								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">Shop</a>
+								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+									aria-haspopup="true" aria-expanded="false">Shop</a>
 								<ul class="dropdown-menu">
 									<li class="nav-item"><a class="nav-link" href="/checkout/">Product Checkout</a></li>
 									<li class="nav-item"><a class="nav-link" href="/confirmation/">Confirmation</a></li>
@@ -60,25 +61,27 @@
 							</li>
 							<li class="nav-item"><a class="nav-link" href="/cart/">cart</a></li>
 							{% if request.session['user_name'] %}
-						    <li class="nav-item submenu dropdown">
-							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">{{ request.session['user_name']}}</a>
+							<li class="nav-item submenu dropdown">
+								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+									aria-haspopup="true" aria-expanded="false">{{ request.session['user_name']}}</a>
 								<ul class="dropdown-menu">
-									<li class="nav-item"><a class="nav-link" >{{ request.session['user_phone']}} </a></li>
-									<li class="nav-item"><a class="nav-link" >{{ request.session['user_email']}} </a></li>
+									<li class="nav-item"><a class="nav-link">{{ request.session['user_phone']}} </a>
+									</li>
+									<li class="nav-item"><a class="nav-link">{{ request.session['user_email']}} </a>
+									</li>
 
 									<li class="nav-item"><a class="nav-link" href="/logout/">logout</a></li>
 								</ul>
 							</li>
 
-							
+
 							{% else %}
-						    <li class="nav-item active"><a class="nav-link" href="/login/">Login/Register</a></li>
+							<li class="nav-item active"><a class="nav-link" href="/login/">Login/Register</a></li>
 
 							{% endif %}
-							
+
 						</ul>
-						
+
 					</div>
 				</div>
 			</nav>
@@ -106,105 +109,78 @@
 	<!--================Order Details Area =================-->
 	<section class="order_details section_gap">
 		<div class="container">
-		<form  action="/confirm/" method="post" >
-			<input type="hidden" name="orderuser_id" value="{{ request.session['user_id']}}">
-			<div class="row order_d_inner">
-				<div class="col-lg-4">
-					<div class="details_item">
-						<h4>Order Info</h4>
-						<ul class="list">
-							{% for t in totals %}
-							{% if request.session['user_id']== t.orderuser_id %}
-							<li><a href="#"><span>Order number</span> :{{t.id}}</a></li>
-							<input type="hidden" name="ordernumber" value={{t.id}}>
-							<li><a href="#"><span>Payment method</span> : Online</a></li>
-							{% endif %}
-							{% endfor%}
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-4">
-					<div class="details_item">
-						<h4>Billing Address</h4>
-						{% for b in billing %}
-						{% if request.session['user_id']== b.orderuser_id %}
-						<ul class="list">
-							<li><a href="#"><span>Name</span> :{{b.name}}</a></li>
-							<input type="hidden" name="name" value="{{b.name}}">
-							<li><a href="#"><span>Phone</span> :{{b.phone}}</a></li>
-							<input type="hidden" name="phone" value={{b.phone}}>
-							<li><a href="#"><span>Email</span> :{{b.email}}</a></li>
-							<input type="hidden" name="email" value={{b.email}}>
-							<li><a href="#"><span>City</span> :{{b.city}}</a></li>
-							<input type="hidden" name="city" value={{b.city}}>
-							<li><a href="#"><span>State</span> :{{b.state}}</a></li>
-							<input type="hidden" name="state" value={{b.state}}>
-							<li><a href="#"><span>Pincode </span> :{{b.pincode}}</a></li>
-							<input type="hidden" name="pincode" value={{b.pincode}}>
-							<li><a href="#"><span>Adress </span> :{{b.address}}</a></li>
-							<input type="hidden" name="address" value={{b.address}}>
-						{% endif %}
-						{% endfor%}
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-4">
-					<h2>Payment Details</h2>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-						</thead>
-						<tbody>
-							<tr>
-								{% for t in totals %}
-								{% if request.session['user_id']== t.orderuser_id %}
-								<td>
-									<h4>Subtotal</h4>
-								</td>
-								<td>
-									<h5></h5>
-								</td>
-								<td>
-									<p>Rs.{{t.subtotal}}</p>
-									<input type="hidden" name="subtotal" value={{t.subtotal}}>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<h4>Shipping</h4>
-								</td>
-								<td>
-									<h5></h5>
-								</td>
-								<td>
-									<p>Rs.{{t.shipping}}</p>
-									<input type="hidden" name="shipping" value={{t.shipping}}>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<h4>Total</h4>
-								</td>
-								<td>
-									<p>Rs.{{t.total}}</p>
-									<input type="hidden" name="total" value={{t.total}}>
-								</td>
-								<td>
-									
-									
-								</td>
-								{% endif%}
-								{% endfor %}
-							</tr>
+			<!-- <form action="/confirm/" method="post"> -->
+				<input type="hidden" name="orderuser_id" value="{{ request.session['user_id']}}">
+				<div class="row order_d_inner">
+					<div class="col-lg-4">
+						<h2>Product Details</h2>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+								</thead>
+								<tbody>
+									<tr>
+										<th>Product</th>
+										<th>Price</th>
+										<th>Quantity</th>
+									</tr>
+									{% for t in totals %}
+									{% if request.session['user_id']== t.orderuser_id %}
+									<tr>
+										<td>{{t.product_d.name}}</td>
+										<td>{{t.product_d.price}}</td>
+										<td>{{t.quantity}}</td>
+									</tr>
+									<tr>
+
+										{% endif%}
+										{% endfor %}
+
+							</table>
 							
-						</tbody>
-					</table>
-					<button class="primary-btn" type="submit" >Confirm Order</button>
+						</div>
+						
+					</div>
+					<div class="col-lg-4">
+						<div class="details_item">
+							<h2>Billing Address</h2>
+							{% for b in billing %}
+							{% if request.session['user_id']== b.orderuser_id %}
+							{% if b.addressuser.id ==b.addressuser.id %}
+							<ul class="list">
+								<li><a href="#"><span>Name</span> :{{b.addressuser.name}}</a></li>
+								<input type="hidden" name="name" value="{{b.name}}">
+								<li><a href="#"><span>Phone</span> :{{b.addressuser.phone}}</a></li>
+								<input type="hidden" name="phone" value={{b.phone}}>
+								<li><a href="#"><span>City</span> :{{b.addressuser.city}}</a></li>
+								<input type="hidden" name="city" value={{b.city}}>
+								<li><a href="#"><span>State</span> :{{b.addressuser.state}}</a></li>
+								<input type="hidden" name="state" value={{b.state}}>
+								<li><a href="#"><span>Pincode </span> :{{b.addressuser.pincode}}</a></li>
+								<input type="hidden" name="pincode" value={{b.pincode}}>
+								<li><a href="#"><span>Adress </span> :{{b.addressuser.address}}</a></li>
+								<input type="hidden" name="address" value={{b.address}}>
+								{% endif %}
+								{% endif %}
+								{% endfor%}
+							</ul>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="details_item">
+							<h2>Order Payment</h2>
+							<ul class="list">
+								<ul class="list list_2">
+									<!-- <li><a><span>Subtotal Amount</span> : {{subtotal_amount}}</a></li> -->
+									<li><a><span>Total Amount</span> : {{total_amount}}</a></li>
+								</ul>
+							</ul>
+							<a href="/tracking/"><button   class="primary-btn" type="submit">Confirm Order</button></a>
+						</div>
+					</div>
 				</div>
-				</div>
-			</div>
 		</div>
-	</form>
+		<!-- </form> -->
 	</section>
 	<!--================End Order Details Area =================-->
 
@@ -216,7 +192,8 @@
 					<div class="single-footer-widget">
 						<h6>About Us</h6>
 						<p>
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
+							ut labore dolore
 							magna aliqua.
 						</p>
 					</div>
@@ -227,18 +204,22 @@
 						<p>Stay update with our latest</p>
 						<div class="" id="mc_embed_signup">
 
-							<form target="_blank" novalidate="true" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
-							 method="get" class="form-inline">
+							<form target="_blank" novalidate="true"
+								action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+								method="get" class="form-inline">
 
 								<div class="d-flex flex-row">
 
-									<input class="form-control" name="EMAIL" placeholder="Enter Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Email '"
-									 required="" type="email">
+									<input class="form-control" name="EMAIL" placeholder="Enter Email"
+										onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Email '"
+										required="" type="email">
 
 
-									<button class="click-btn btn btn-default"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></button>
+									<button class="click-btn btn btn-default"><i class="fa fa-long-arrow-right"
+											aria-hidden="true"></i></button>
 									<div style="position: absolute; left: -5000px;">
-										<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
+										<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value=""
+											type="text">
 									</div>
 
 									<!-- <div class="col-lg-4 col-md-4">
@@ -279,10 +260,14 @@
 				</div>
 			</div>
 			<div class="footer-bottom d-flex justify-content-center align-items-center flex-wrap">
-				<p class="footer-text m-0"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-</p>
+				<p class="footer-text m-0">
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+					Copyright &copy;
+					<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is
+					made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com"
+						target="_blank">Colorlib</a>
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+				</p>
 			</div>
 		</div>
 	</footer>
@@ -292,8 +277,9 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
 	<script src="../static/js/vendor/jquery-2.2.4.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-	 crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+		integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+		crossorigin="anonymous"></script>
 	<script src="../static/js/vendor/bootstrap.min.js"></script>
 	<script src="../static/js/jquery.ajaxchimp.min.js"></script>
 	<script src="../static/js/jquery.nice-select.min.js"></script>

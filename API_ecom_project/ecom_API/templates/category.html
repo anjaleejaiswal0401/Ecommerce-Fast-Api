@@ -111,13 +111,13 @@
 					<ul class="main-categories">
 						{% for c in ct %}
 						
-						<li class="main-nav-list"><a data-toggle="collapse" href="#fruitsVegetable" aria-expanded="false" aria-controls="fruitsVegetable"><span
+						<li class="main-nav-list"><a data-toggle="collapse" href="#{{c.name}}" aria-expanded="false" aria-controls="fruitsVegetable"><span
 								 class="lnr lnr-arrow-right"></span>{{c.name}}</a>
-							<ul class="collapse" id="fruitsVegetable" data-toggle="collapse" aria-expanded="false" aria-controls="fruitsVegetable">
+							<ul class="collapse" id="{{c.name}}" data-toggle="collapse" aria-expanded="false" aria-controls="fruitsVegetable">
 								{% for s in sct %}
 								
 								{% if c.id == s.category_id%}
-								<li class="main-nav-list child"><a href="#">{{s.name}}</span></a></li>
+								<li class="main-nav-list child"><a href="/filter/{{s.id}}"> {{s.name}}</span></a></li>
 								{% endif %}
 								{% endfor %}
 								
@@ -136,7 +136,7 @@
 					<div class="row">
 						<!-- single product -->
 						{% for p in addp %}
-						<div class="col-lg-3 col-md-6">
+						<div class="col-lg-4 col-md-6">
 							<div class="single-product">
 								<img src="{{url}}/{{p.product_image}}" alt="">
 								<div class="product-details">
@@ -147,15 +147,8 @@
 									</div>
 									<div class="prd-bottom">
 	
-										<a href="" class="social-info">
-											<span class="ti-bag"></span>
-											<p class="hover-text">add to bag</p>
-										</a>
-										<a href="" class="social-info">
-											<span class="lnr lnr-heart"></span>
-											<p class="hover-text">Wishlist</p>
-										</a>
-										<a href="/single-product/" class="social-info">
+										
+										<a href="/product/{{p.slug}}/" class="social-info">
 											<span class="lnr lnr-move"></span>
 											<p class="hover-text">view more</p>
 										</a>

@@ -34,6 +34,10 @@ function changeTotal() {
 
 $(document).ready(function(){
   
+  $(".full-price").each(function(index){
+    changeVal($(this));
+  });
+
   $(".remove").click(function(){
     var el = $(this);
     el.parent().parent().addClass("removed");

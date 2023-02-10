@@ -77,24 +77,46 @@ class Addtocart(Model):
     product_d = fields.ForeignKeyField("models.Add_products", related_name= "cartad", on_delete="CASCADE")     
     
 
+
 class Order(Model):
     id =fields.IntField(pk=True)
     orderuser= fields.ForeignKeyField("models.Create_user", related_name= "cartor", on_delete="CASCADE")
-    subtotal = fields.FloatField() 
+    product_d = fields.ForeignKeyField("models.Add_products", related_name= "cartadoo", on_delete="CASCADE")
+    quantity = fields.CharField(50)
+    subtotal = fields.FloatField()
     shipping = fields.FloatField()
     total = fields.FloatField()
 
-class Billing(Model):
+
+class Address(Model):
     id = fields.IntField(pk=True)
-    orderuser= fields.ForeignKeyField("models.Create_user", related_name= "bil", on_delete="CASCADE")
+    orderuser= fields.ForeignKeyField("models.Create_user", related_name= "add", on_delete="CASCADE")
     name = fields.CharField(50,)
-    email = fields.CharField(50, unique=True)
     phone = fields.CharField(10)
     address = fields.CharField(50,)
     city = fields.CharField(50,)
     state = fields.CharField(choices=STATE_CHOICES,max_length=200)
     pincode = fields.CharField(10)
-    billingorder= fields.ForeignKeyField("models.Order", related_name= "bill", on_delete="CASCADE")
+    
+
+# class Billing(Model):
+#     id = fields.IntField(pk=True)
+#     orderuser= fields.ForeignKeyField("models.Create_user", related_name= "bil", on_delete="CASCADE")
+#     name = fields.CharField(50,)
+#     email = fields.CharField(50, unique=True)
+#     phone = fields.CharField(10)
+#     address = fields.CharField(50,)
+#     city = fields.CharField(50,)
+#     state = fields.CharField(choices=STATE_CHOICES,max_length=200)
+#     pincode = fields.CharField(10)
+#     billingorder= fields.ForeignKeyField("models.Order", related_name= "bill", on_delete="CASCADE")
+
+class Checkout(Model):
+    id = fields.IntField(pk=True)
+    addressuser= fields.ForeignKeyField("models.Address", related_name= "bill", on_delete="CASCADE")
+    orderuser= fields.ForeignKeyField("models.Create_user", related_name= "billu", on_delete="CASCADE")
+
+
 
 class Orderhistory(Model):
     id =fields.IntField(pk=True)

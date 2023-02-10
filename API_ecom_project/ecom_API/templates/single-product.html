@@ -70,7 +70,7 @@
 									<li class="nav-item"><a class="nav-link" href="/tracking/">Tracking</a></li>
 								</ul>
 							</li>
-							<li class="nav-item"><a class="nav-link" href="/cart2/">cart</a></li>
+							<li class="nav-item"><a class="nav-link" href="/cart/">cart</a></li>
 							{% if request.session['user_name'] %}
 						    <li class="nav-item submenu dropdown">
 							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -144,7 +144,7 @@
 						<br>
 						<input type="hidden" name="product_d_id" value={{addp.id}}>
 						<input type="hidden" name="user_id" value={{ request.session['user_id']}}>
-
+						
 						<div class="card_area d-flex align-items-center">
 							<button class="primary-btn" type="submit" >Add to Cart</button>
 
@@ -155,6 +155,7 @@
 		</div>
 	</div>
 </form>
+
 	<!--================End Single Product Area =================-->
 
 	<!--================Product Description Area =================-->

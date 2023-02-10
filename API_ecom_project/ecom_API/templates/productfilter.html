@@ -104,83 +104,70 @@
 				</div>
 			</div>
 		</div>
+		
 	</section>
+	
 	<!-- End Banner Area -->
-	<form id="form" action="/billing/" method="post" >
 	<div class="container">
 		<div class="row">
-			
-
+			<div class="col-xl-3 col-lg-4 col-md-5">
+				<div class="sidebar-categories">
+					<div class="head">Browse Categories</div>
+					<ul class="main-categories">
+						{% for c in ct %}
+						
+						<li class="main-nav-list"><a data-toggle="collapse" href="#{{c.name}}" aria-expanded="false" aria-controls="fruitsVegetable"><span
+								 class="lnr lnr-arrow-right"></span>{{c.name}}</a>
+							<ul class="" id="{{c.name}}" data-toggle="collapse" aria-expanded="false" aria-controls="fruitsVegetable">
+								{% for s in scts %}
+								
+								{% if c.id == s.category_id%}
+								<li class="main-nav-list child"><a href="/filter/{{s.id}}"> {{s.name}}</span></a></li>
+								{% endif %}
+								{% endfor %}
+								
+							</ul>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
 
 				<!-- End Filter Bar -->
 				<!-- Start Best Seller -->
-				<h3>Select Address</h3>
-
-				<section class="lattest-product-area pb-40 category-list mt-15">
+				<h1>{{sct.name}}</h1>
+				<section class="lattest-product-area pb-40 category-list">
 					<div class="row">
-			
-						
 						<!-- single product -->
+						
+						{% for p in addp %}
 
-						{% for a in add %}
-						{% if request.session['user_id']== a.orderuser_id %}
+						{% if sct.id == p.subcategory_id%}
+						<div class="col-lg-4 col-md-6">
+							<div class="single-product">
+								<img src="{{url}}/{{p.product_image}}" alt="">
+								<div class="product-details">
+									<h6>{{p.name}}</h6>
+									<div class="price">
+										<h6>{{p.discountprice}}</h6>
+										<h6 class="l-through">{{p.price}}</h6>
+									</div>
+									<div class="prd-bottom">
 
-
-
-						<div class="col-lg-6 col-md-6">
-					<input type="hidden" name="orderuser_id" value="{{ request.session['user_id']}}">
-
-
-							<input type="radio" id="radioButton" value="{{a.id}}" onclick="getSelectedValue(this)" name="addressuser_id" >
-							
-							<input type="hidden" id="selected_item" value="{{a.id}}">
-							<script>
-								document.getElementById("radioButton").addEventListener("click", function () {
-									this.checked = !this.checked;
-								});
-							</script>
-							<script>
-								function getSelectedValue(radio) {
-								  document.getElementById("selected_item").value = radio.value;
-								}
-							  </script>
-							<span>Address {{a.id}}</span>
-							<p>Name: {{a.name}}</p>
-							<p>Phone: {{a.phone}}</p>
-							<p>Address: {{a.address}}</p>
-							<p>city: {{a.city}}</p>
-							<p>State: {{a.state}}</p>
-							<p>Pincode: {{a.pincode}}</p>
+										
+										<a href="/product/{{p.slug}}/" class="social-info">
+											<span class="lnr lnr-move"></span>
+											<p class="hover-text">view more</p>
+										</a>
+									</div>
+								</div>
+							</div>
 						</div>
 						{% endif %}
 						{% endfor %}
-
 					</div>
-					<a class="primary-btn" href="/address/">Add more address</a>
-
-			</div>
-			<div class="col-xl-3 col-lg-4 col-md-5">
-				<div class="order_box">
-					{% for t in totals %}
-					{% if request.session['user_id']== t.orderuser_id %}
-					<img src="{{url}}/{{t.product_d.product_image}}" alt="" width="50" height="50">
-					<ul class="list list_2">
-						<li><a href="#">Product <span>{{t.product_d.name}}</span></a></li>
-						<li><a href="#">Price <span>{{t.product_d.price}}</span></a></li>
-						<li><a href="#">Quantity <span>{{t.quantity}}</span></a></li>
-					</ul>
-					{% endif %}
-					{% endfor %}
-						
-							<ul class="list list_2">
-								<li><a href="#">Total Amount :{{total_amount}}</a></li>
-							</ul>
-						
-					<button class="primary-btn" type="submit">Review Order</button>
-					</form>
-				</div>
 			</div>
 			</section>
 			<!-- End Best Seller -->

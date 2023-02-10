@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi import APIRouter, Request, Form, status, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi import APIRouter
 from ecom_API.pydantic_models import *
 from . models import *
@@ -87,12 +87,35 @@ async def create_user(request: Request, email: EmailStr = Form(...),
             user_obj = await Create_user.create(email=email, name=name,
                                                 phone=phone, password=get_password_hash(password))
             print(user_obj)
+            flash(request, "Registration successfully", "success")
             return RedirectResponse("/login/", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/login/", response_class=HTMLResponse)
 async def read_item(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, })
+
+
+@router.get("/welcome/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse("welcome.html", {"request": request, })
+
+
+@router.get("/address/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse("address.html", {"request": request, })
+
+
+@router.post('/address/',)
+async def create_add(request: Request,
+                     name: str = Form(...), address: str = Form(...), 
+                     city: str = Form(...), pincode: str = Form(...),
+                     phone: str = Form(...), state: str = Form(...),
+                     ):
+    orderuser_id = request.session["user_id"]
+    if await Address.create(name=name, phone=phone, address=address,
+                            city=city, orderuser_id=orderuser_id, pincode=pincode, state=state):
+        return RedirectResponse("/checkout/", status_code=status.HTTP_302_FOUND)
 
 
 @manager.user_loader()
@@ -124,7 +147,8 @@ async def login(request: Request, email: str = Form(...),
         print(request.session["user_id"])
 
         print(request.session["user_name"])
-        return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
+        flash(request, "Login successfully", "success")
+        return RedirectResponse("/welcome/", status_code=status.HTTP_302_FOUND)
 
 
 @router.get('/logout/', )
@@ -147,6 +171,16 @@ async def read_item(request: Request):
     return templates.TemplateResponse("category.html", {"request": request, 'ct': ct, 'sct': sct, 'addp': addp})
 
 
+@router.get("/filter/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: int):
+    addp = await Add_products.all()
+    sct = await SubCategory.get(id=id)
+
+    ct = await Category.all()
+    scts = await SubCategory.all()
+    return templates.TemplateResponse("productfilter.html", {"request": request, 'sct': sct, 'addp': addp, 'ct': ct, 'scts': scts})
+
+
 @router.get("/product/{slug:str}/", response_class=HTMLResponse)
 async def read_item(request: Request, slug: str):
     addp = await Add_products.get(slug=slug).select_related("category")
@@ -158,12 +192,6 @@ async def read_item(request: Request, slug: str):
 async def read_item(request: Request):
     add_to_cart = await Addtocart.all().select_related("product_d", "user")
     return templates.TemplateResponse("cart.html", {"request": request, "add_to_cart": add_to_cart})
-
-
-# @router.get("/cart/", response_class=HTMLResponse)
-# async def read_item(request: Request):
-#     add_to_cart = await ADDincart.all()
-#     return templates.TemplateResponse("cart.html", {"request": request, "add_to_cart": add_to_cart})
 
 
 @router.post('/addtocart/',)
@@ -178,53 +206,61 @@ async def create_cart(request: Request, product_d_id: int = Form(...),):
 
 
 @router.post('/order/',)
-async def create_order(request: Request, shipping: float = Form(...),
+async def create_order(request: Request, product_d_id: List[int] = Form(...),
+                       shipping: float = Form(...),
                        subtotal: float = Form(...),
                        total: float = Form(...),
-                       ):
-
+                       quantity: List[str] = Form(...),):
     orderuser_id = request.session["user_id"]
-    sd = await Order.get(orderuser_id=orderuser_id).delete()
-    if await Order.create(orderuser_id=orderuser_id, shipping=shipping,
-                          subtotal=subtotal, total=total):
-        return RedirectResponse("/checkout/", status_code=status.HTTP_302_FOUND)
+    list_lengths = [len(product_d_id), len(quantity)]
+    clr = await Order.get(orderuser_id=orderuser_id).delete()
+    if len(set(list_lengths)) != 1:
+        return HTTPException(status_code=400, detail="The lists must have the same length")
+    for i in range(len(quantity)):
+        await Order.create(orderuser_id=orderuser_id, shipping=shipping,
+                           product_d_id=product_d_id[i], subtotal=subtotal, total=total, quantity=quantity[i])
+    return RedirectResponse("/checkout/", status_code=status.HTTP_302_FOUND)
 
 
 @router.post('/billing/',)
-async def create_bill(request: Request, billingorder_id: int = Form(...),
-                      name: str = Form(...), address: str = Form(...), email: EmailStr = Form(...),
-                      city: str = Form(...), pincode: str = Form(...),
-                      phone: str = Form(...), state: str = Form(...),
-                      ):
+async def create_bill(request: Request, addressuser_id: int = Form(...),):
     orderuser_id = request.session["user_id"]
-    add = await Addtocart.all().select_related("product_d", "user")
-    if await Billing.create(name=name, phone=phone, billingorder_id=billingorder_id,
-                            email=email, address=address, city=city, orderuser_id=orderuser_id, pincode=pincode, state=state):
+    # clra = await Checkout.get(addressuser_id=addressuser_id).delete()
+    clra = await Checkout.all().delete()
+    deletecart = await Addtocart.get(user_id=orderuser_id).delete()
+
+    if await Checkout.create(addressuser_id=addressuser_id,orderuser_id=orderuser_id,):
         return RedirectResponse("/confirmation/", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/checkout/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    totals = await Order.all()
+    totals = await Order.all().select_related("product_d", "orderuser")
     users = await Create_user.all()
-    return templates.TemplateResponse("checkout.html", {"request": request, "totals": totals, "users": users})
+    add = await Address.all()
+    for t in totals:
+        if request.session['user_id'] == t.orderuser_id:
+            subtotal_amount = t.subtotal
+            total_amount = t.total
+
+    return templates.TemplateResponse("checkout.html", {"request": request, "totals": totals, "users": users, "add": add, "total_amount": total_amount,"subtotal_amount":subtotal_amount})
 
 
-@router.post('/confirm/',)
-async def create_bill(request: Request,
-                      name: str = Form(...), address: str = Form(...), email: EmailStr = Form(...),
-                      city: str = Form(...), pincode: str = Form(...), state: str = Form(...),
-                      phone: str = Form(...), subtotal: float = Form(...), total: float = Form(...),
-                      shipping: float = Form(...), ordernumber: str = Form(...),):
-    orderuser_id = request.session["user_id"]
-    add = await Addtocart.all().select_related("user")
+# @router.post('/confirm/',)
+# async def create_bill(request: Request,
+#                       name: str = Form(...), address: str = Form(...), email: EmailStr = Form(...),
+#                       city: str = Form(...), pincode: str = Form(...), state: str = Form(...),
+#                       phone: str = Form(...), subtotal: float = Form(...), total: float = Form(...),
+#                       shipping: float = Form(...), ordernumber: str = Form(...),):
+#     orderuser_id = request.session["user_id"]
+#     add = await Addtocart.all().select_related("user")
 
-    deletecart = await Addtocart.get(user_id=orderuser_id).delete()
-    deleteorder = await Order.get(orderuser_id=orderuser_id).delete()
-    if await Orderhistory.create(name=name, phone=phone, ordernumber=ordernumber,
-                                 email=email, address=address, city=city, orderuser_id=orderuser_id, pincode=pincode, state=state, subtotal=subtotal, total=total, shipping=shipping):
+#     deletecart = await Addtocart.get(orderuser_id=orderuser_id).delete()
+#     deleteorder = await Order.get(orderuser_id=orderuser_id).delete()
+#     if await Orderhistory.create(name=name, phone=phone, ordernumber=ordernumber,
+#                                  email=email, address=address, city=city, orderuser_id=orderuser_id, pincode=pincode, state=state, subtotal=subtotal, total=total, shipping=shipping):
 
-        return RedirectResponse("/tracking/", status_code=status.HTTP_302_FOUND)
+#         return RedirectResponse("/tracking/", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/delete_cartitem/{id}")
@@ -236,9 +272,12 @@ async def delete_cartproducts(request: Request, id: int):
 
 @router.get("/confirmation/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    totals = await Order.all()
-    billing = await Billing.all()
-    return templates.TemplateResponse("confirmation.html", {"request": request, "totals": totals, "billing": billing})
+    totals = await Order.all().select_related("product_d", "orderuser")
+    billing = await Checkout.all().select_related("addressuser")
+    for t in totals:
+        if request.session['user_id'] == t.orderuser_id:
+            total_amount = t.total
+    return templates.TemplateResponse("confirmation.html", {"request": request, "totals": totals, "billing": billing,"total_amount": total_amount})
 
 
 @router.get("/tracking/", response_class=HTMLResponse)
@@ -256,3 +295,9 @@ async def create_child(request: Request,
                        name: str = Form(...), value: int = Form(...), parent_id: int = Form(...),):
     child = await Child.create(name=name, value=value, parent_id=parent_id)
     return child
+
+
+@router.get("/wishlist/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    add_to_wishlist = await Wishlist.all().select_related("product_d", "user")
+    return templates.TemplateResponse("wishlist.html", {"request": request, "add_to_wishlist": add_to_wishlist})

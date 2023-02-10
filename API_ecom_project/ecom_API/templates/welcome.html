@@ -94,8 +94,8 @@
 				<div class="col-first">
 					<h1>Login/Register</h1>
 					<nav class="d-flex align-items-center">
-						<a href="/index/">Home<span class="lnr lnr-arrow-right"></span></a>
-						<a href="/category/">Login/Register</a>
+						<a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+						<a href="category.html">Login/Register</a>
 					</nav>
 				</div>
 			</div>
@@ -113,37 +113,33 @@
 						<div class="hover">
 							<h4>New to our website?</h4>
 							<p>There are advances being made in science and technology everyday, and a good example of this is the</p>
-							<a class="primary-btn" href="/registration/"></a>
+							
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6">
 					<div class="login_form_inner">
 						{% for message in get_flashed_messages(request) %}
+							<div class="alert alert-success" role="alert">
+								{{ message.message }}
+							</div>
+						{% endfor %}
+						{% for message in get_flashed_messages(request) %}
 							<div class="alert alert-danger" role="alert">
 								{{ message.message }}
 							</div>
 						{% endfor %}
-						<h3>Registration to enter</h3>
-						<form class="row login_form" action="/registration/" method="post" id="contactForm" novalidate="novalidate">
-							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="name" name="name" placeholder="Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Name'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="email" class="form-control" id="name" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
-							</div>
-                            <div class="col-md-12 form-group">
-								<input type="number" class="form-control" id="name" name="phone" placeholder="Phone" >
-							</div>
-                            <div class="col-md-12 form-group">
-								<input type="password" class="form-control" id="name" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-							</div>
-							
-							<div class="col-md-12 form-group">
-								<button type="submit" value="submit" class="primary-btn">Submit</button>
-								<a href="/login/">Already have an account ? Login</a>
-							</div>
-						</form>
+						<h1>Welcome to our website</h1>
+						{% if request.session['user_name'] %}
+						<h1>{{ request.session['user_name']}}</h1>
+                        {% endif %}
+
+                        <div class="col-md-12 form-group">
+                            <a href="/"><button type="button" class="btn btn-success">Explore</button></a>
+                        </div>
+
+
+						
 					</div>
 				</div>
 			</div>

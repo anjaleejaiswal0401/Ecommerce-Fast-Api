@@ -92,10 +92,9 @@
 		<div class="container">
 			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
 				<div class="col-first">
-					<h1>Login/Register</h1>
+					<h1>Address</Address></h1>
 					<nav class="d-flex align-items-center">
-						<a href="/index/">Home<span class="lnr lnr-arrow-right"></span></a>
-						<a href="/category/">Login/Register</a>
+						
 					</nav>
 				</div>
 			</div>
@@ -113,36 +112,54 @@
 						<div class="hover">
 							<h4>New to our website?</h4>
 							<p>There are advances being made in science and technology everyday, and a good example of this is the</p>
-							<a class="primary-btn" href="/registration/"></a>
+							
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6">
 					<div class="login_form_inner">
 						{% for message in get_flashed_messages(request) %}
+							<div class="alert alert-success" role="alert">
+								{{ message.message }}
+							</div>
+						{% endfor %}
+						{% for message in get_flashed_messages(request) %}
 							<div class="alert alert-danger" role="alert">
 								{{ message.message }}
 							</div>
 						{% endfor %}
-						<h3>Registration to enter</h3>
-						<form class="row login_form" action="/registration/" method="post" id="contactForm" novalidate="novalidate">
-							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="name" name="name" placeholder="Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Name'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="email" class="form-control" id="name" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
-							</div>
-                            <div class="col-md-12 form-group">
-								<input type="number" class="form-control" id="name" name="phone" placeholder="Phone" >
-							</div>
-                            <div class="col-md-12 form-group">
-								<input type="password" class="form-control" id="name" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-							</div>
-							
-							<div class="col-md-12 form-group">
-								<button type="submit" value="submit" class="primary-btn">Submit</button>
-								<a href="/login/">Already have an account ? Login</a>
-							</div>
+						
+                                <h3>Address Details</h3>
+                                <form class="row contact_form" action="/address/" method="post" novalidate="novalidate" id="my2Form">
+        
+                                    <div class="col-md-12 form-group">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="name">
+                                    </div>
+                                    <div class="col-md-6 form-group p_star">
+                                        <input type="text" class="form-control" id="number" name="phone" placeholder="Phone number">
+                                        
+                                    </div>
+                                    
+                                    <div class="col-md-12 form-group p_star">
+                                        <input type="text" class="form-control" id="address" name="address" placeholder="Address">
+                                        
+                                    </div>
+                                    <div class="col-md-12 form-group p_star">
+                                        <input type="text" class="form-control" id="city" name="city" placeholder="Town/City">
+                                    
+                                    </div>
+                                    <div class="col-md-12 form-group p_star">
+                                        <input type="text" class="form-control" id="state" name="state" placeholder="State">
+                                     
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Pincode">
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <button type="submit" value="submit" class="primary-btn">Submit</button>
+                                    </div>
+                                
+                            </div>
 						</form>
 					</div>
 				</div>
