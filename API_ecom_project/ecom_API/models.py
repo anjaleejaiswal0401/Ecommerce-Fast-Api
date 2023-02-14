@@ -31,7 +31,8 @@ class Create_user(Model):
     email = fields.CharField(50, unique=True)
     phone = fields.CharField(10)
     password = fields.CharField(200)
-
+    city = fields.CharField(50)
+    address = fields.CharField(100)
 
 class Category(Model):
     id = fields.IntField(pk=True)
@@ -40,7 +41,6 @@ class Category(Model):
     is_active = fields.BooleanField(default=True)
     updated_at = fields.DatetimeField(auto_now=True)
     created_at = fields.DatetimeField(auto_now_add=True)
-
 
 class SubCategory(Model):
     id = fields.IntField(pk=True)
@@ -51,11 +51,8 @@ class SubCategory(Model):
     updated_at = fields.DatetimeField(auto_now=True)
     created_at = fields.DatetimeField(auto_now_add=True)
 
-
 class Photo(Model):
     product_image =fields.TextField()
-
-
 
 class Add_products(Model):
     id = fields.IntField(pk=True)
@@ -69,15 +66,11 @@ class Add_products(Model):
     product_image = fields.TextField()
     is_active = fields.BooleanField(default=True)
 
-
-
 class Addtocart(Model):
     id =fields.IntField(pk=True)
     user= fields.ForeignKeyField("models.Create_user", related_name= "cartadd", on_delete="CASCADE")     
     product_d = fields.ForeignKeyField("models.Add_products", related_name= "cartad", on_delete="CASCADE")     
     
-
-
 class Order(Model):
     id =fields.IntField(pk=True)
     orderuser= fields.ForeignKeyField("models.Create_user", related_name= "cartor", on_delete="CASCADE")
@@ -86,7 +79,6 @@ class Order(Model):
     subtotal = fields.FloatField()
     shipping = fields.FloatField()
     total = fields.FloatField()
-
 
 class Address(Model):
     id = fields.IntField(pk=True)
@@ -97,46 +89,11 @@ class Address(Model):
     city = fields.CharField(50,)
     state = fields.CharField(choices=STATE_CHOICES,max_length=200)
     pincode = fields.CharField(10)
-    
-
-# class Billing(Model):
-#     id = fields.IntField(pk=True)
-#     orderuser= fields.ForeignKeyField("models.Create_user", related_name= "bil", on_delete="CASCADE")
-#     name = fields.CharField(50,)
-#     email = fields.CharField(50, unique=True)
-#     phone = fields.CharField(10)
-#     address = fields.CharField(50,)
-#     city = fields.CharField(50,)
-#     state = fields.CharField(choices=STATE_CHOICES,max_length=200)
-#     pincode = fields.CharField(10)
-#     billingorder= fields.ForeignKeyField("models.Order", related_name= "bill", on_delete="CASCADE")
-
+   
 class Checkout(Model):
     id = fields.IntField(pk=True)
     addressuser= fields.ForeignKeyField("models.Address", related_name= "bill", on_delete="CASCADE")
     orderuser= fields.ForeignKeyField("models.Create_user", related_name= "billu", on_delete="CASCADE")
-
-
-
-class Orderhistory(Model):
-    id =fields.IntField(pk=True)
-    orderuser= fields.ForeignKeyField("models.Create_user", related_name= "confirm", on_delete="CASCADE")
-    ordernumber =fields.CharField(50)
-    name = fields.CharField(50,)
-    email = fields.CharField(50, unique=True)
-    phone = fields.CharField(10)
-    address = fields.CharField(50,)
-    city = fields.CharField(50,)
-    state = fields.CharField(50)
-    pincode = fields.CharField(10)
-    subtotal = fields.FloatField() 
-    shipping = fields.FloatField()
-    total = fields.FloatField()
+    order= fields.ForeignKeyField("models.Order", related_name= "orderr", on_delete="CASCADE")
     
-    
-
-    
-
-    
-
     Tortoise.init_models(['ecom_API.models'], 'models')

@@ -165,6 +165,8 @@
 				<div class="order_box">
 					{% for t in totals %}
 					{% if request.session['user_id']== t.orderuser_id %}
+					<input type="hidden" name="order_id" value="{{t.id}}">
+
 					<img src="{{url}}/{{t.product_d.product_image}}" alt="" width="50" height="50">
 					<ul class="list list_2">
 						<li><a href="#">Product <span>{{t.product_d.name}}</span></a></li>

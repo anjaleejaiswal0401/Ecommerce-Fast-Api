@@ -59,7 +59,9 @@ async def read_item(request: Request):
 async def create_user(request: Request, email: EmailStr = Form(...),
                       name: str = Form(...),
                       phone: str = Form(...),
-                      password: str = Form(...)):
+                      password: str = Form(...),
+                      city: str = Form(...),
+                      address: str = Form(...)):
     reg_pass = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
     pat_pass = re.compile(reg_pass)
     mat_pass = re.search(pat_pass, password)
@@ -85,7 +87,7 @@ async def create_user(request: Request, email: EmailStr = Form(...),
             return RedirectResponse("/registration/", status_code=status.HTTP_302_FOUND)
         else:
             user_obj = await Create_user.create(email=email, name=name,
-                                                phone=phone, password=get_password_hash(password))
+                                                phone=phone, city=city, address=address,password=get_password_hash(password))
             print(user_obj)
             flash(request, "Registration successfully", "success")
             return RedirectResponse("/login/", status_code=status.HTTP_302_FOUND)
@@ -96,14 +98,7 @@ async def read_item(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, })
 
 
-@router.get("/welcome/", response_class=HTMLResponse)
-async def read_item(request: Request):
-    return templates.TemplateResponse("welcome.html", {"request": request, })
 
-
-@router.get("/address/", response_class=HTMLResponse)
-async def read_item(request: Request):
-    return templates.TemplateResponse("address.html", {"request": request, })
 
 
 @router.post('/address/',)
@@ -223,13 +218,13 @@ async def create_order(request: Request, product_d_id: List[int] = Form(...),
 
 
 @router.post('/billing/',)
-async def create_bill(request: Request, addressuser_id: int = Form(...),):
+async def create_bill(request: Request, addressuser_id: int = Form(...),order_id: int = Form(...),):
     orderuser_id = request.session["user_id"]
     # clra = await Checkout.get(addressuser_id=addressuser_id).delete()
     clra = await Checkout.all().delete()
     deletecart = await Addtocart.get(user_id=orderuser_id).delete()
 
-    if await Checkout.create(addressuser_id=addressuser_id,orderuser_id=orderuser_id,):
+    if await Checkout.create(addressuser_id=addressuser_id,orderuser_id=orderuser_id,order_id=order_id,):
         return RedirectResponse("/confirmation/", status_code=status.HTTP_302_FOUND)
 
 
@@ -242,32 +237,18 @@ async def read_item(request: Request):
         if request.session['user_id'] == t.orderuser_id:
             subtotal_amount = t.subtotal
             total_amount = t.total
-
+    
     return templates.TemplateResponse("checkout.html", {"request": request, "totals": totals, "users": users, "add": add, "total_amount": total_amount,"subtotal_amount":subtotal_amount})
 
 
-# @router.post('/confirm/',)
-# async def create_bill(request: Request,
-#                       name: str = Form(...), address: str = Form(...), email: EmailStr = Form(...),
-#                       city: str = Form(...), pincode: str = Form(...), state: str = Form(...),
-#                       phone: str = Form(...), subtotal: float = Form(...), total: float = Form(...),
-#                       shipping: float = Form(...), ordernumber: str = Form(...),):
-#     orderuser_id = request.session["user_id"]
-#     add = await Addtocart.all().select_related("user")
-
-#     deletecart = await Addtocart.get(orderuser_id=orderuser_id).delete()
-#     deleteorder = await Order.get(orderuser_id=orderuser_id).delete()
-#     if await Orderhistory.create(name=name, phone=phone, ordernumber=ordernumber,
-#                                  email=email, address=address, city=city, orderuser_id=orderuser_id, pincode=pincode, state=state, subtotal=subtotal, total=total, shipping=shipping):
-
-#         return RedirectResponse("/tracking/", status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/delete_cartitem/{id}")
+
+@router.delete("/delete_cartitem/{id}")
 async def delete_cartproducts(request: Request, id: int):
     delete_products = await Addtocart.get(id=id).delete()
-    # await delete_products.delete()
-    return RedirectResponse("/cart/", status_code=status.HTTP_302_FOUND)
+
+    return JSONResponse({'success':True})
 
 
 @router.get("/confirmation/", response_class=HTMLResponse)
@@ -290,14 +271,14 @@ async def read_item(request: Request):
     return templates.TemplateResponse("profile.html", {"request": request, })
 
 
-@router.post('/anjalee/',)
-async def create_child(request: Request,
-                       name: str = Form(...), value: int = Form(...), parent_id: int = Form(...),):
-    child = await Child.create(name=name, value=value, parent_id=parent_id)
-    return child
 
 
-@router.get("/wishlist/", response_class=HTMLResponse)
+
+@router.get("/welcome/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    add_to_wishlist = await Wishlist.all().select_related("product_d", "user")
-    return templates.TemplateResponse("wishlist.html", {"request": request, "add_to_wishlist": add_to_wishlist})
+    return templates.TemplateResponse("welcome.html", {"request": request, })
+
+
+@router.get("/address/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse("address.html", {"request": request, })
