@@ -9,7 +9,7 @@ Created an ecommeres website which contains user pannel .
 User pannel can be accessed by anyone who wants to buy products.
 
 
-#Features in User pannel
+# Features in User pannel
 
 User registration, login, update, delete.
 
